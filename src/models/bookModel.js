@@ -31,6 +31,20 @@ class Book {
     const query = 'DELETE FROM books WHERE id = $1';
     await pool.query(query, [id]);
   }
+
+  static async search(query) {
+    const sqlQuery = 'SELECT * FROM books WHERE title ILIKE $1 OR author ILIKE $1';
+    const values = [`%${query}%`];
+    const result = await pool.query(sqlQuery, values);
+    return result.rows;
+  }
+
+  static async reserve(bookId, userId) {
+    const query = 'INSERT INTO reservations (book_id, user_id) VALUES ($1, $2) RETURNING *';
+    const values = [bookId, userId];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
 }
 
 module.exports = Book;

@@ -53,7 +53,6 @@ exports.deleteBook = async (req, res) => {
   }
 };
 
-// Nuevos métodos añadidos
 exports.searchBooks = async (req, res) => {
   try {
     const { query } = req.query;

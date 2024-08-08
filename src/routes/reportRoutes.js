@@ -1,9 +1,19 @@
-const express = require('express');
-const router = express.Router();
-const reportController = require('../controllers/reportController');
-const authMiddleware = require('../middleware/auth');
+const pool = require('../config/db');
 
-router.get('/', authMiddleware, reportController.getReports);
-router.get('/:id', authMiddleware, reportController.getReportDetails);
+class Report {
+  static async generateUsageReport() {
+    const query = `
+      SELECT
+        b.title,
+        COUNT(l.id) AS loan_count
+      FROM books b
+      LEFT JOIN loans l ON b.id = l.book_id
+      GROUP BY b.title
+      ORDER BY loan_count DESC
+    `;
+    const { rows } = await pool.query(query);
+    return rows;
+  }
+}
 
-module.exports = router;
+module.exports = Report;
